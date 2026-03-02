@@ -13,21 +13,21 @@
   "checkApproval": true,
   "language": "en",
   "notesLanguage": "change to your language with ISO 639-1 code, available languages: vi (Vietnamese), en (English)",
-  "nickNameBot": "GoatBot",
+  "nickNameBot": "𝐒𝐄𝐙𝐔𝐊𝐀 𝐁𝐀𝐁𝐘__√♥︎👑🧙‍♀️",
   "prefix": "!",
   "adminOnly": {
     "enable": false,
     "ignoreCommand": []
   },
   "adminBot": [
-    "61557290571000",
-    "100087625774227",
-    "61584035788710"
+    "100077613090585",
+    "100069974382148",
+    ""
   ],
   "whiteListMode": {
     "enable": false,
-    "whiteListIds": ["61557290571000",
-"61584035788710",
+    "whiteListIds": ["100077613090585",
+"100069974382148",
       ""
     ],
     "notes": "if you enable this feature, only the ids in the whiteListIds list can use the bot"
