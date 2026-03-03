@@ -1,17 +1,17 @@
 const axios = require('axios');
 const baseApiUrl = async () => {
-    return "https://noobs-api.top/dipto";
+    return "https://baby-apisx.vercel.app";
 };
 
 module.exports.config = {
     name: "bby",
-    aliases: ["baby", "bbe", "babe", "sam"],
-    version: "6.9.0",
-    author: "dipto",
+    aliases: ["baby"],
+    version: "0.0.1",
+    author: "ArYAN",
     countDown: 0,
     role: 0,
-    description: "better then all sim simi",
-    category: "chat",
+    description: "update simsim api by Aryan Rayhan",
+    category: "CHARTING",
     guide: {
         en: "{pn} [anyMessage] OR\nteach [YourMessage] - [Reply1], [Reply2], [Reply3]... OR\nteach [react] [YourMessage] - [react1], [react2], [react3]... OR\nremove [YourMessage] OR\nrm [YourMessage] - [indexNumber] OR\nmsg [YourMessage] OR\nlist OR \nall OR\nedit [YourMessage] - [NeeMessage]"
     }
@@ -24,7 +24,7 @@ module.exports.onStart = async ({
     usersData
 }) => {
     const link = `${await baseApiUrl()}/baby`;
-    const dipto = args.join(" ").toLowerCase();
+    const aryan = args.join(" ").toLowerCase();
     const uid = event.senderID;
     let command, comd, final;
 
@@ -34,16 +34,21 @@ module.exports.onStart = async ({
             return api.sendMessage(ran[Math.floor(Math.random() * ran.length)], event.threadID, event.messageID);
         }
 
-        if (args[0] === 'remove') {
-            const fina = dipto.replace("remove ", "");
-            const dat = (await axios.get(`${link}?remove=${fina}&senderID=${uid}`)).data.message;
-            return api.sendMessage(dat, event.threadID, event.messageID);
-        }
-
-        if (args[0] === 'rm' && dipto.includes('-')) {
-            const [fi, f] = dipto.replace("rm ", "").split(/\s*-\s*/);
-            const da = (await axios.get(`${link}?remove=${fi}&index=${f}`)).data.message;
-            return api.sendMessage(da, event.threadID, event.messageID);
+        if (args[0] === 'remove' || args[0] === 'rm') {
+            const keyword = args[0];
+            const rest = aryan.replace(`${keyword} `, "").trim();
+            if (!rest || rest === keyword) {
+                return api.sendMessage('❌ | Format: remove [message] OR rm [message] - [index]', event.threadID, event.messageID);
+            }
+            
+            if (rest.includes('-')) {
+                const [fi, f] = rest.split(/\s*-\s*/);
+                const da = (await axios.get(`${link}?remove=${encodeURIComponent(fi.trim())}&index=${f.trim()}&senderID=${uid}`)).data.message;
+                return api.sendMessage(da, event.threadID, event.messageID);
+            } else {
+                const dat = (await axios.get(`${link}?remove=${encodeURIComponent(rest)}&senderID=${uid}`)).data.message;
+                return api.sendMessage(dat, event.threadID, event.messageID);
+            }
         }
 
         if (args[0] === 'list') {
@@ -70,30 +75,47 @@ module.exports.onStart = async ({
         }
 
         if (args[0] === 'msg') {
-            const fuk = dipto.replace("msg ", "");
+            const fuk = aryan.replace("msg ", "");
             const d = (await axios.get(`${link}?list=${fuk}`)).data.data;
             return api.sendMessage(`Message ${fuk} = ${d}`, event.threadID, event.messageID);
         }
 
         if (args[0] === 'edit') {
-            const command = dipto.split(/\s*-\s*/)[1];
-            if (command.length < 2) return api.sendMessage('❌ | Invalid format! Use edit [YourMessage] - [NewReply]', event.threadID, event.messageID);
-            const dA = (await axios.get(`${link}?edit=${args[1]}&replace=${command}&senderID=${uid}`)).data.message;
-            return api.sendMessage(`changed ${dA}`, event.threadID, event.messageID);
+            if (!aryan.includes('-')) {
+                return api.sendMessage('❌ | Invalid format! Use: edit [YourMessage] - [NewReply]', event.threadID, event.messageID);
+            }
+            const parts = aryan.replace("edit ", "").split(/\s*-\s*/);
+            const editKey = parts[0]?.trim();
+            const newReply = parts[1]?.trim();
+            if (!editKey || !newReply || newReply.length < 1) {
+                return api.sendMessage('❌ | Invalid format! Use: edit [YourMessage] - [NewReply]', event.threadID, event.messageID);
+            }
+            const dA = (await axios.get(`${link}?edit=${encodeURIComponent(editKey)}&replace=${encodeURIComponent(newReply)}&senderID=${uid}`)).data.message;
+            return api.sendMessage(`${dA}`, event.threadID, event.messageID);
         }
 
         if (args[0] === 'teach' && args[1] !== 'amar' && args[1] !== 'react') {
-            [comd, command] = dipto.split(/\s*-\s*/);
+            [comd, command] = aryan.split(/\s*-\s*/);
             final = comd.replace("teach ", "");
             if (command.length < 2) return api.sendMessage('❌ | Invalid format!', event.threadID, event.messageID);
             const re = await axios.get(`${link}?teach=${final}&reply=${command}&senderID=${uid}&threadID=${event.threadID}`);
             const tex = re.data.message;
-            const teacher = (await usersData.get(re.data.teacher)).name;
-            return api.sendMessage(`✅ Replies added ${tex}\nTeacher: ${teacher}\nTeachs: ${re.data.teachs}`, event.threadID, event.messageID);
+            let teacherName = "Unknown";
+            try {
+                const userData = await usersData.get(uid);
+                teacherName = userData?.name || await usersData.getName(uid) || "Unknown";
+            } catch (e) {
+                try {
+                    teacherName = await usersData.getName(uid) || "Unknown";
+                } catch (e2) {
+                    teacherName = "Unknown";
+                }
+            }
+            return api.sendMessage(`✅ Replies added ${tex}\nTeacher: ${teacherName}\nTeachs: ${re.data.teachs}`, event.threadID, event.messageID);
         }
 
         if (args[0] === 'teach' && args[1] === 'amar') {
-            [comd, command] = dipto.split(/\s*-\s*/);
+            [comd, command] = aryan.split(/\s*-\s*/);
             final = comd.replace("teach ", "");
             if (command.length < 2) return api.sendMessage('❌ | Invalid format!', event.threadID, event.messageID);
             const tex = (await axios.get(`${link}?teach=${final}&senderID=${uid}&reply=${command}&key=intro`)).data.message;
@@ -101,19 +123,19 @@ module.exports.onStart = async ({
         }
 
         if (args[0] === 'teach' && args[1] === 'react') {
-            [comd, command] = dipto.split(/\s*-\s*/);
+            [comd, command] = aryan.split(/\s*-\s*/);
             final = comd.replace("teach react ", "");
             if (command.length < 2) return api.sendMessage('❌ | Invalid format!', event.threadID, event.messageID);
             const tex = (await axios.get(`${link}?teach=${final}&react=${command}`)).data.message;
             return api.sendMessage(`✅ Replies added ${tex}`, event.threadID, event.messageID);
         }
 
-        if (dipto.includes('amar name ki') || dipto.includes('amr nam ki') || dipto.includes('amar nam ki') || dipto.includes('amr name ki') || dipto.includes('whats my name')) {
+        if (aryan.includes('amar name ki') || aryan.includes('amr nam ki') || aryan.includes('amar nam ki') || aryan.includes('amr name ki') || aryan.includes('whats my name')) {
             const data = (await axios.get(`${link}?text=amar name ki&senderID=${uid}&key=intro`)).data.reply;
             return api.sendMessage(data, event.threadID, event.messageID);
         }
 
-        const d = (await axios.get(`${link}?text=${dipto}&senderID=${uid}&font=1`)).data.reply;
+        const d = (await axios.get(`${link}?text=${aryan}&senderID=${uid}&font=1`)).data.reply;
         api.sendMessage(d, event.threadID, (error, info) => {
             global.GoatBot.onReply.set(info.messageID, {
                 commandName: this.config.name,
